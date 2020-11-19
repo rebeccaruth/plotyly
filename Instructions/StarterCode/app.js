@@ -35,7 +35,7 @@ function init() {
     var selector = d3.select("#selDataset");
     d3.json("samples.json").then((sample_data)=>{
         var sample_names = sample_data.names;
-        sample_names.foreach((sample)=>{
+        sample_names.forEach((sample)=>{
             selector 
             .append("option")
             .text(sample)
@@ -45,7 +45,5 @@ function init() {
     readFile(first_sample);
     });
 }
-
-
 
 
