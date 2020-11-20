@@ -8,7 +8,7 @@ function readFile(sample) {
         var otu_id = result.otu_ids;
         var otu_labels = result.otu_labels;
         var sample_values = result.sample_values;
-
+        //bar
         var yticks = otu_id.slice(0,10).map(otuID => `OTU ${otuID}`).reverse();
         var barData = [
             {
@@ -27,6 +27,28 @@ function readFile(sample) {
 
         Plotly.newPlot("bar", barData, layout);
 
+        //bubble
+        var trace1 = {
+            x: otu_id,
+            y: sample_values,
+            text: otu_labels,
+            mode: 'markers',
+            marker: {
+            color: otu_id,
+            size: sample_values
+            }
+        };
+        
+        var data = [trace1];
+        
+        var layout = {
+            height: 600,
+            width: 600
+        };
+        
+        Plotly.newPlot('bubble', data, layout);
+
+
     });
 
 }
@@ -43,7 +65,29 @@ function init() {
         });
     var first_sample = sample_names[0];
     readFile(first_sample);
+    demographics(first_sample);
+    });
+}
+
+init();
+
+function demographics(sample) {
+    d3.json("samples.json").then((sample_data) => {
+        var metadata = sample_data.metadata;
+        console.log(metadata);
+        var info = metadata.filter(sampleObj => sampleObj.id == sample)[0];
+        console.log(info);
+        var demo_info = d3.select("#sample-metadata") 
+        demo_info.html("");
+        Object.entries(info).forEach(([key, value]) => {
+            demo_info.append("h5").text(`${key}: ${value}`);
+        });
     });
 }
 
 
+
+function optionChanged(sample) {
+    readFile(sample);
+    demographics(sample);
+  };
